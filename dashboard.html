@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dashboard - DVTEAM NP</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffd700">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="dashboard">
+    <img src="logo.png" alt="Logo DVTEAM NP" class="small-logo" />
+    <h2>Dashboard DVTEAM NP</h2>
+    
+    <div id="mainDashboardContent">
+      
+      <div class="card" style="background: linear-gradient(45deg, #1a1a1a, #000); border: 1px solid var(--warna-utama);">
+        <div class="target-container" style="background: transparent; border: none; margin: 0; padding: 0;">
+          <div class="target-text">
+            <h4>Misi: Menuju Target</h4>
+            <p id="targetProgressText">Loading...</p>
+          </div>
+          <div style="width: 70px; height: 70px;">
+             <canvas id="targetChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card stats-card">
+          <h3>Total Anggota</h3>
+          <span id="totalMembers">Loading...</span>
+        </div>
+
+        <div class="card form-card">
+          <h3>Tambah Anggota Baru</h3>
+          <div id="form-container">
+            <label for="name" class="input-label">Nama</label>
+            <input type="text" id="name" placeholder="Nama Anggota" />
+            
+            <label for="uid" class="input-label">UID</label>
+            <input type="text" id="uid" placeholder="UID Anggota (Wajib)" />
+            
+            <label for="upline" class="input-label">UID Upline</label>
+            <input type="text" id="upline" placeholder="UID Upline (opsional)" />
+            
+            <label for="joinDateInput" class="input-label">Tgl. Bergabung</label>
+            <input type="date" id="joinDateInput" />
+            
+            <button id="addMemberButton">Tambah Anggota</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <h3>Diagram Pertumbuhan Anggota</h3>
+        <select id="chartPeriodSelector" style="display:none;"><option value="0">Semua</option></select>
+        <div class="chart-canvas-container">
+            <canvas id="growthChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card search-card">
+        <h3>Pencarian & Manajemen</h3>
+        <div class="search-container">
+            <input type="text" id="searchTerm" placeholder="Cari Nama atau UID..." />
+            <button id="searchButton">Cari</button>
+            <button id="resetButton" class="btn-secondary">Reset</button>
+        </div>
+        <div id="searchResultsContainer"></div>
+      </div>
+
+      <div class="card actions-card">
+        <h3>Aksi & Data</h3>
+        <div class="actions-grid">
+          <button id="uploadButton" style="display:none;">Upload CSV</button>
+          <button id="viewNetworkButton">Lihat Struktur Jaringan</button>
+          <button id="viewMemberListButton">Daftar Lengkap Anggota</button>
+          <button id="downloadButton">Download Data (CSV)</button>
+          <button id="broadcastButton" class="btn-secondary" style="border: 1px solid gold; color: gold;">📢 Buat Broadcast</button>
+        </div>
+        <input type="file" id="csvFile" accept=".csv" style="display: none;" />
+      </div>
+    </div>
+
+    <div id="memberListContainer" class="card" style="display: none;">
+      <h3>Daftar Lengkap Anggota</h3>
+      <div style="overflow-x: auto;">
+        <table id="memberListTable" class="results-table">
+          <thead>
+            <tr>
+              <th data-sort="no" class="sortable-header">No.</th>
+              <th data-sort="name" class="sortable-header">Nama</th>
+              <th data-sort="uid" class="sortable-header">UID</th>
+              <th data-sort="upline" class="sortable-header">UID Refferal</th>
+              <th data-sort="joinDate" class="sortable-header sort-asc">Tgl Bergabung</th>
+            </tr>
+          </thead>
+          <tbody id="memberListTableBody"></tbody>
+        </table>
+      </div>
+      <button id="backToDashboardButton" class="btn-secondary" style="margin-top: 20px;">Kembali</button>
+    </div>
+    
+    <button id="logoutButton" class="btn-danger" style="margin-top: 20px; width: 100%; max-width: 400px;">Logout</button>
+  </div>
+  
+  <div id="editModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>Edit Data Anggota</h3>
+      <input type="hidden" id="originalUid">
+      <label>Nama Anggota</label><input type="text" id="editName">
+      <label>UID Anggota</label><input type="text" id="editUid">
+      <label>UID Upline</label><input type="text" id="editUpline">
+      <label>Tanggal Bergabung</label><input type="date" id="editJoinDate">
+      <div style="margin-top: 15px;">
+        <button id="saveEditButton">Simpan</button>
+        <button id="cancelEditButton" class="btn-secondary">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+          <h3>Konfirmasi Hapus</h3>
+          <p>Yakin ingin menghapus anggota ini?</p>
+          <div style="margin-top: 15px;">
+              <button id="confirmDeleteButton" class="btn-danger">Ya, Hapus</button>
+              <button id="cancelDeleteButton" class="btn-secondary">Batal</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="broadcastModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>📢 Template Broadcast Tim</h3>
+      <textarea id="broadcastResult" rows="8" style="width:100%; background:#111; color:#fff; padding:10px; border:1px solid #333; border-radius:5px;"></textarea>
+      <div style="margin-top: 15px;">
+         <button onclick="copyBroadcast()">Salin Teks</button>
+         <button class="btn-secondary" onclick="document.getElementById('broadcastModal').style.display='none'">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="showMainDashboard()">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='network.html'">
+      <span class="nav-icon">🌳</span>
+      <span>Jaringan</span>
+    </button>
+    <button class="nav-item" onclick="generateBroadcast()">
+      <span class="nav-icon">🔥</span>
+      <span>Motivasi</span>
+    </button>
+    <button class="nav-item" onclick="logout()">
+      <span class="nav-icon">🚪</span>
+      <span>Keluar</span>
+    </button>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>

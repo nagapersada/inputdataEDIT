@@ -1,0 +1,23 @@
+{
+  "name": "Database DVTEAM NP",
+  "short_name": "DataNP",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "background_color": "#121212",
+  "theme_color": "#ffd700",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

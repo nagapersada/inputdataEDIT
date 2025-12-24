@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DVTEAM NP - Login</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffd700">
+  <link rel="apple-touch-icon" href="icon.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <img src="logo.png" alt="Logo DVTEAM NP" class="logo" />
+    <h2>DVTEAM NP</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginButton">Login</button>
+    <p id="error" style="color: red;"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
