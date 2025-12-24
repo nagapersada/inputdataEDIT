@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DVTEAM NETWORK PRO</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d4af37">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="main-header">
+      <div class="brand">
+        <img src="logo.png" alt="Logo" class="logo-mini" />
+        <div>
+          <h1>DVTEAM <span class="gold-text">PRO</span></h1>
+          <p id="dateDisplay">Elite Network Management</p>
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn-icon">🚪</button>
+    </header>
+
+    <div class="stats-grid">
+      <div class="card glass-stat">
+        <span class="stat-label">Total Pasukan</span>
+        <h2 id="totalMembers">0</h2>
+        <div class="stat-footer">Aktif & Terverifikasi</div>
+      </div>
+      <div class="card glass-stat">
+        <span class="stat-label">Kedalaman Struktur</span>
+        <h2 id="networkDepth">0 <small>Levels</small></h2>
+        <div class="stat-footer">Reach Jaringan</div>
+      </div>
+      <div class="card glass-stat target-card">
+        <canvas id="targetChart"></canvas>
+        <div class="target-info">
+          <span id="targetPercent">0%</span>
+          <p>Misi Target</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tab-bar">
+      <button class="tab-link active" onclick="switchTab('tab-add')">Rekrutmen</button>
+      <button class="tab-link" onclick="switchTab('tab-manage')">Manajemen</button>
+      <button class="tab-link" onclick="switchTab('tab-analyze')">Analisis</button>
+    </nav>
+
+    <section id="tab-add" class="tab-content active">
+      <div class="card glass-form">
+        <h3>Pendaftaran Anggota Baru</h3>
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="name" placeholder="Contoh: Budi Santoso" />
+          </div>
+          <div class="input-group">
+            <label>UID (Unique ID)</label>
+            <input type="text" id="uid" placeholder="Wajib diisi" />
+          </div>
+          <div class="input-group">
+            <label>UID Refferal (Upline)</label>
+            <input type="text" id="upline" placeholder="Opsional" />
+          </div>
+          <div class="input-group">
+            <label>Tanggal Bergabung</label>
+            <input type="date" id="joinDateInput" />
+          </div>
+          <button id="addMemberButton" class="btn-primary full-width">Amankan Data</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-manage" class="tab-content">
+      <div class="card glass-search">
+        <div class="search-bar">
+          <input type="text" id="searchTerm" placeholder="Cari Nama atau UID..." />
+          <button id="searchButton">Cari</button>
+        </div>
+        <div id="searchResultsContainer" class="results-list"></div>
+      </div>
+      
+      <div class="action-grid-mini">
+        <button onclick="window.location.href='network.html'">Visual Struktur</button>
+        <button onclick="downloadCSV()" class="btn-outline">Ekspor Data CSV</button>
+      </div>
+    </section>
+
+    <section id="tab-analyze" class="tab-content">
+      <div class="card glass-chart">
+        <h3>Pertumbuhan Eksponensial</h3>
+        <canvas id="growthChart"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <div id="editModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card">
+      <h3>Perbarui Data Anggota</h3>
+      <input type="hidden" id="originalUid">
+      <div class="form-grid">
+        <input type="text" id="editName" placeholder="Nama">
+        <input type="text" id="editUid" placeholder="UID">
+        <input type="text" id="editUpline" placeholder="Upline">
+        <input type="date" id="editJoinDate">
+        <div class="modal-actions">
+          <button id="saveEditButton">Simpan</button>
+          <button onclick="closeEditModal()" class="btn-secondary">Batal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
